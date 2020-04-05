@@ -1,7 +1,7 @@
 content_length = 1000000
 
 function parse_range(range)
-    local matches, err = ngx.re.match(range_header, "^bytes=(\\\\d+)?-(\\\\d+)?", "joi")
+    local matches, err = ngx.re.match(range, "^bytes=(\\\\d+)?-(\\\\d+)?$", "joi")
 
     if matches then
         if matches[1] == nil and matches[2] then
@@ -11,7 +11,6 @@ function parse_range(range)
     end
     return 0, content_length - 1
 end
-
 function do_request(start, stop)
     if stop < content_length / 3 then
         return 0
@@ -24,4 +23,4 @@ end
 
 local range_header = ngx.req.get_headers()["Range"] or "bytes=0-"
 local start, stop = parse_range(range_header)
-do_request(start, stop)
+do_request(tonumber(start),tonumber(stop))
