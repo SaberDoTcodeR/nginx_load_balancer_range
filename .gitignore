@@ -64,3 +64,5 @@ dkms.conf
 !.vscode/extensions.json
 
 # End of https://www.gitignore.io/api/c,code
+
+workspace.code-workspace
