@@ -10,7 +10,7 @@ function get_redirect_url(server)
 end
 
 function parse_range(range)
-    local matches, err = ngx.re.match(range, "^bytes=(\\\\d+)?-(\\\\d+)?$", "joi")
+    local matches, err = ngx.re.match(range, "^bytes=(\\\\d+)?-(\\\\d+)?(\\\\s*,\\\\s*(\\\\d+)?-(\\\\d+)?)*$", "joi")
 
     if matches then
         if matches[1] == nil and matches[2] then
