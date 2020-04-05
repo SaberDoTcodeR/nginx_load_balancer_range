@@ -1,47 +1,27 @@
-local match = ngx.re.match
-
-            	local start = 0
-local stop = -1
 content_length = 1000000
 
--- parse range header
-local range_header = ngx.req.get_headers()["Range"] or "bytes=0-"
-local matches, err = match(range_header, "^bytes=(\\\\d+)?-(\\\\d+)?", "joi")
-if matches then
-	if matches[1] == nil and matches[2] then
-		stop = (content_length - 1)
-		start = (stop - matches[2]) + 1
-	else
-		start = matches[1] or 0
-		stop = matches[2] or (content_length - 1)
-	end
-else
-	stop = (content_length - 1)
+function parse_range(range)
+    local matches, err = ngx.re.match(range_header, "^bytes=(\\\\d+)?-(\\\\d+)?", "joi")
+
+    if matches then
+        if matches[1] == nil and matches[2] then
+            return content_length - matches[2], content_length - 1
+        end
+        return matches[1] or 0, matches[2] or (content_length - 1)
+    end
+    return 0, content_length - 1
 end
 
-ngx.say(start)
-ngx.say(stop)
-
-
-function get_server_index(start, stop)
+function do_request(start, stop)
     if stop < content_length / 3 then
         return 0
     elseif start >= content_length / 3 and stop < content_length * 2 / 3 then
-        return 1
+        ngx.redirect("https://google.com", 302)
     elseif start >= content_length * 2 / 3 then
-        return 2
+        ngx.redirect("https://varzesh3.com", 302)
     end
 end
 
-ngx.say(get_server_index(start, stop))
-ngx.say("bye")
-
-function redirect(index) then
-    if index == 1 then
-        ngx.redirect("https://google.com")
-    elseif index == 2 then
-        ngx.redirect("https://varzesh3.com")
-    end
-end
-
-redirect(get_server_index(start, stop))
+local range_header = ngx.req.get_headers()["Range"] or "bytes=0-"
+local start, stop = parse_range(range_header)
+do_request(start, stop)
