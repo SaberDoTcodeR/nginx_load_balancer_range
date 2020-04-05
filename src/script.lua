@@ -20,17 +20,18 @@ else
 	stop = (content_length - 1)
 end
 
-ngx.log(ngx.NOTICE, start)
-ngx.log(ngx.NOTICE, stop)
+ngx.say(start)
+ngx.say(stop)
 
--- function get_server_index(start, stop)
---     if stop < content_length / 3 then
---         return 0
---     else if start >= content_length / 3 and stop < content_length * 2 / 3 then
---         return 1
---     else if start >= content_length * 2 / 3 then
---         return 2
---     end
--- end
 
--- print(get_server_index(0,345660 ))
+function get_server_index(start, stop)
+    if stop < content_length / 3 then
+        return 0
+    else if start >= content_length / 3 and stop < content_length * 2 / 3 then
+        return 1
+    else if start >= content_length * 2 / 3 then
+        return 2
+    end
+end
+
+print(get_server_index(0,345660 ))
