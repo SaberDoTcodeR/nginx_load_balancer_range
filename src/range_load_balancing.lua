@@ -4,9 +4,7 @@ second_server = "https://server2.com"
 third_server = "https://server3.com"
 
 function get_redirect_url(server)
-    local url_parser = require "net.url"
-    parsed = url_parser.parse(ngx.req.uri)
-    return server .. parsed.path
+    return server .. ngx.var.uri
 end
 
 function parse_range(range)
@@ -31,6 +29,4 @@ end
 
 local range_header = ngx.req.get_headers()["Range"] or "bytes=0-"
 local start, stop = parse_range(range_header)
-
-ngx.log(ngx.STDERR,start .. " " .. stop)
 do_request(tonumber(start),tonumber(stop))
