@@ -1,4 +1,13 @@
-content_length = 1000000
+
+content_length = 90000000
+second_server = "https://server2.com"
+third_server = "https://server3.com"
+
+function get_redirect_url(server)
+    local url_parser = require "net.url"
+    parsed = url_parser.parse(ngx.req.uri)
+    return server .. parsed.path
+end
 
 function parse_range(range)
     local matches, err = ngx.re.match(range, "^bytes=(\\\\d+)?-(\\\\d+)?$", "joi")
@@ -11,16 +20,17 @@ function parse_range(range)
     end
     return 0, content_length - 1
 end
+
 function do_request(start, stop)
-    if stop < content_length / 3 then
-        return 0
-    elseif start >= content_length / 3 and stop < content_length * 2 / 3 then
-        ngx.redirect("https://google.com", 302)
-    elseif start >= content_length * 2 / 3 then
-        ngx.redirect("https://varzesh3.com", 302)
+    if start > content_length / 3 and stop <= content_length * 2 / 3 then
+        ngx.redirect(get_redirect_url(second_server))
+    elseif start > content_length * 2 / 3 then
+        ngx.redirect(get_redirect_url(third_server))
     end
 end
 
 local range_header = ngx.req.get_headers()["Range"] or "bytes=0-"
 local start, stop = parse_range(range_header)
+
+ngx.log(ngx.STDERR,start .. " " .. stop)
 do_request(tonumber(start),tonumber(stop))
