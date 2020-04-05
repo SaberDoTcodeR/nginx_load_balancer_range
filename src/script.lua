@@ -33,6 +33,15 @@ function get_server_index(start, stop)
     end
 end
 
-ngx.say(get_server_index(0,34566))
+ngx.say(get_server_index(start, stop))
 ngx.say("bye")
-		
+
+function redirect(index) then
+    if index == 1 then
+        ngx.redirect("https://google.com")
+    elseif index == 2 then
+        ngx.redirect("https://varzesh3.com")
+    end
+end
+
+redirect(get_server_index(start, stop))
